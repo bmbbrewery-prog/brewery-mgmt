@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getOrgAuth } from "@/lib/auth-sync";
 
+import { startOfMonth, subMonths, addMonths } from "date-fns";
+
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -11,21 +13,37 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized or no organization selected" }, { status: 401 });
     }
 
-    const tanks = await prisma.tank.findMany({
-      where: { organizationId: orgId }
-    });
-    const templates = await prisma.template.findMany({
-      where: { organizationId: orgId },
-      include: { tasks: true },
-    });
-    const batches = await prisma.batch.findMany({
-      where: { organizationId: orgId },
-      include: { tasks: true, template: true, mainTank: true },
-    });
-    const workSchedules = await prisma.workSchedule.findMany({
-      where: { organizationId: orgId },
-      include: { tank: true },
-    });
+    const now = new Date();
+    const startLimit = subMonths(startOfMonth(now), 6);
+    const endLimit = addMonths(now, 30);
+
+    const [tanks, templates, batches, workSchedules] = await Promise.all([
+      prisma.tank.findMany({
+        where: { organizationId: orgId }
+      }),
+      prisma.template.findMany({
+        where: { organizationId: orgId },
+        include: { tasks: true },
+      }),
+      prisma.batch.findMany({
+        where: { 
+          organizationId: orgId,
+          brewDate: { gte: startLimit, lte: endLimit }
+        },
+        include: { tasks: true, template: true, mainTank: true },
+        orderBy: { brewDate: 'desc' }
+      }),
+      prisma.workSchedule.findMany({
+        where: { 
+          organizationId: orgId,
+          OR: [
+            { startDate: { gte: startLimit, lte: endLimit } },
+            { isRecurring: true }
+          ]
+        },
+        include: { tank: true },
+      })
+    ]);
 
     return NextResponse.json({ tanks, templates, batches, workSchedules });
   } catch (error) {
