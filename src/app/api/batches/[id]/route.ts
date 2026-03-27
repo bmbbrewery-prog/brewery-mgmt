@@ -272,7 +272,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             const t = bTasks[i];
             if (!segStart) segStart = t.date;
             if (t.isCIP || i === bTasks.length - 1) {
-               newIntervals.push({ tankId: tId, start: segStart, end: t.date });
+                newIntervals.push({ tankId: tId, start: segStart!, end: t.date });
                segStart = null;
             }
          }

@@ -3,19 +3,29 @@ const prisma = new PrismaClient();
 
 async function repro() {
   try {
-    const user = await prisma.user.findFirst({ where: { email: "demo@example.com" } });
-    if (!user) {
-      console.log("User not found");
+    const user = await prisma.user.findFirst({ 
+      where: { email: "demo@example.com" },
+      include: { memberships: true } 
+    });
+    if (!user || user.memberships.length === 0) {
+      console.log("User or membership not found");
       return;
     }
 
-    const template = await prisma.template.findFirst({ include: { tasks: true } });
+    const orgId = user.memberships[0].organizationId;
+
+    const template = await prisma.template.findFirst({ 
+      where: { organizationId: orgId },
+      include: { tasks: true } 
+    });
     if (!template) {
       console.log("Template not found");
       return;
     }
 
-    const tank = await prisma.tank.findFirst();
+    const tank = await prisma.tank.findFirst({
+      where: { organizationId: orgId }
+    });
     if (!tank) {
       console.log("Tank not found");
       return;
@@ -25,7 +35,8 @@ async function repro() {
       name: "Repro Batch",
       templateId: template.id,
       brewDate: new Date().toISOString(),
-      tankId: tank.id
+      tankId: tank.id,
+      organizationId: orgId
     });
 
     // Simulate the POST logic manually to see where it fails
@@ -36,6 +47,7 @@ async function repro() {
         templateId: template.id,
         brewDate: new Date(brewDateStr),
         userId: user.id,
+        organizationId: orgId,
         mainTankId: tank.id,
       },
     });
