@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id // Clerk User ID: user_...
+  name          String?
+  email         String?        @unique
+  memberships   Membership[]
+  batches       Batch[]
+  tanks         Tank[]
+  templates     Template[]
+  workSchedules WorkSchedule[]
+}
+
+model Organization {
+  id            String         @id // Clerk Org ID: org_...
+  name          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  members       Membership[]
+  batches       Batch[]
+  tanks         Tank[]
+  templates     Template[]
+  workSchedules WorkSchedule[]
+}
+
+model Membership {
+  id             String       @id @default(cuid())
+  role           String       @default("member")
+  userId         String
+  organizationId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@unique([userId, organizationId])
+}
+
+model Tank {
+  id             String         @id @default(cuid())
+  name           String
+  type           String?
+  capacity       Float?
+  category       String         @default("TANK")
+  sortOrder      Int            @default(0)
+  color          String?
+  userId         String?
+  organizationId String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  batches        Batch[]
+  user           User?          @relation(fields: [userId], references: [id])
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tasks          Task[]
+  workSchedules  WorkSchedule[]
+}
+
+model Template {
+  id             String         @id @default(cuid())
+  name           String
+  description    String?
+  userId         String?
+  organizationId String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  batches        Batch[]
+  user           User?          @relation(fields: [userId], references: [id])
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tasks          TemplateTask[]
+}
+
+model TemplateTask {
+  id               String   @id @default(cuid())
+  name             String
+  offsetDays       Int
+  templateId       String
+  isTankMovement   Boolean  @default(false)
+  requiresNextTank Boolean  @default(false)
+  isCIP            Boolean  @default(false)
+  template         Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+}
+
+model Batch {
+  id             String       @id @default(cuid())
+  name           String
+  brewDate       DateTime
+  templateId     String
+  userId         String?
+  organizationId String
+  mainTankId     String?
+  color          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  mainTank       Tank?        @relation(fields: [mainTankId], references: [id])
+  user           User?        @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  template       Template     @relation(fields: [templateId], references: [id])
+  tasks          Task[]
+}
+
+model Task {
+  id             String   @id @default(cuid())
+  name           String
+  date           DateTime
+  batchId        String
+  tankId         String?
+  isCompleted    Boolean  @default(false)
+  offsetDays     Int?
+  isTankMovement Boolean  @default(false)
+  isCIP          Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  tank           Tank?    @relation(fields: [tankId], references: [id])
+  batch          Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+}
+
+model WorkSchedule {
+  id             String       @id @default(cuid())
+  name           String
+  description    String?
+  startDate      DateTime
+  endDate        DateTime?
+  isRecurring    Boolean      @default(false)
+  recurringDay   Int?
+  recurringUntil DateTime?
+  tankId         String
+  userId         String?
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           User?        @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tank           Tank         @relation(fields: [tankId], references: [id])
+}
