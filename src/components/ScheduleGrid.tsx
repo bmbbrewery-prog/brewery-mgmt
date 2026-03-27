@@ -12,6 +12,7 @@ import {
 } from "date-fns";
 import { ja } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { getWorkOccurrencesInRange } from "@/lib/work-utils";
 import AddBatchModal from "./AddBatchModal";
 import BatchDetailModal from "./BatchDetailModal";
 import AddWorkModal from "./AddWorkModal";
@@ -197,19 +198,11 @@ export default function ScheduleGrid() {
   }, [batches]);
 
   const workOccurrences = useMemo(() => {
-    if (!Array.isArray(workSchedules)) return [];
-    return workSchedules.flatMap((ws: any) => {
-      if (!ws.isRecurring) return [ws];
-      const results: any[] = [];
-      const until = addMonths(startOfDay(new Date(ws.startDate)), 6);
-      let cur = startOfDay(new Date(ws.startDate));
-      while (cur <= until) {
-        if (getDay(cur) === ws.recurringDay) results.push({ ...ws, startDate: cur.toISOString(), endDate: ws.endDate });
-        cur = addDays(cur, 1);
-      }
-      return results;
-    });
-  }, [workSchedules]);
+    if (!Array.isArray(workSchedules) || dates.length === 0) return [];
+    const rangeStart = dates[0];
+    const rangeEnd = dates[dates.length - 1];
+    return workSchedules.flatMap((ws: any) => getWorkOccurrencesInRange(ws, rangeStart, rangeEnd));
+  }, [workSchedules, dates]);
 
   const mergedStays = useMemo(() => {
     const stays: any[] = [];

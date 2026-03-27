@@ -7,6 +7,7 @@ import { ja } from "date-fns/locale";
 import AppLayout from "@/components/AppLayout";
 import { Printer, Calendar, Beer, ClipboardList, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isWorkActiveOnDate } from "@/lib/work-utils";
 
 export default function TasksReportPage() {
   return (
@@ -62,12 +63,7 @@ function TasksReportContent() {
   ).sort((a, b) => a.tankName.localeCompare(b.tankName));
 
   const workTasks = data.workSchedules
-    .filter((ws: any) => {
-      const start = startOfDay(new Date(ws.startDate));
-      const end = ws.endDate ? startOfDay(new Date(ws.endDate)) : start;
-      const target = startOfDay(selectedDate);
-      return target >= start && target <= end;
-    })
+    .filter((ws: any) => isWorkActiveOnDate(ws, selectedDate))
     .map((ws: any) => {
       const tank = data.tanks.find(t => t.id === ws.tankId);
       return {

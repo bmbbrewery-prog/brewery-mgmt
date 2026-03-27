@@ -114,23 +114,25 @@ export default function AddTankModal({ isOpen, onClose, onSuccess, category = "T
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-black text-slate-700 dark:text-slate-300 ml-1">カラー設定</label>
-              <div className="grid grid-cols-4 gap-2">
-                {COLORS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setColor(c === color ? null : c)}
-                    className={cn(
-                      "h-10 rounded-xl border-4 transition-all",
-                      c === color ? "scale-95 border-slate-900 dark:border-white" : "border-transparent hover:scale-105"
-                    )}
-                    style={{ backgroundColor: c }}
-                  />
-                ))}
+            {category === "WORK" && (
+              <div className="space-y-2">
+                <label className="text-sm font-black text-slate-700 dark:text-slate-300 ml-1">カラー設定</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {COLORS.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setColor(c === color ? null : c)}
+                      className={cn(
+                        "h-10 rounded-xl border-4 transition-all",
+                        c === color ? "scale-95 border-slate-900 dark:border-white" : "border-transparent hover:scale-105"
+                      )}
+                      style={{ backgroundColor: c }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {error && (

@@ -273,7 +273,9 @@ export default function AddTemplateModal({ isOpen, onClose, onSuccess, editingTe
 
         <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex gap-3">
           <button type="button" onClick={onClose} className="flex-1 py-3 px-4 rounded-2xl text-sm font-black text-slate-500 hover:bg-slate-100 transition-colors">キャンセル</button>
-          <button onClick={handleSubmit} disabled={isSubmitting} className="flex-[2] py-3 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-sm font-black shadow-xl hover:opacity-90 transition-opacity">保存する</button>
+          <button onClick={handleSubmit} disabled={isSubmitting} className="flex-[2] py-3 px-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-sm font-black shadow-xl hover:opacity-90 disabled:opacity-50 transition-all">
+            {isSubmitting ? "保存中..." : "保存する"}
+          </button>
         </div>
       </div>
     </div>
