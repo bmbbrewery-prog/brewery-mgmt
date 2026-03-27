@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getOrgAuth } from "@/lib/auth-sync";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const orgId = await getOrgAuth();

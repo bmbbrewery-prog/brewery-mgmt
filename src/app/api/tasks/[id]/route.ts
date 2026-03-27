@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getOrgAuth } from "@/lib/auth-sync";
 
+export const dynamic = "force-dynamic";
+
 // DELETE /api/tasks/[id] — With cascading for movements and safety CIP capping
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {

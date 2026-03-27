@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 // DELETE /api/work-schedules/[id]
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {

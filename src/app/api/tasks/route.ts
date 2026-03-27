@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getOrgAuth } from "@/lib/auth-sync";
 
+export const dynamic = "force-dynamic";
+
 // POST /api/tasks — add a task to an existing batch
 export async function POST(req: Request) {
   try {
