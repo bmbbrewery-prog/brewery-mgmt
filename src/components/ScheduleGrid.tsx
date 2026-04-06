@@ -385,9 +385,9 @@ export default function ScheduleGrid() {
         <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-grow overflow-auto relative scrollbar-hide">
           {!isInitialLoading && (
             <table className="w-full border-collapse table-fixed" style={{ width: `calc(80px + ${sortedTanks.length * columnWidth}px)` }}>
-              <thead className="sticky top-0 z-[100] bg-white border-b border-slate-300 dark:border-slate-700">
+              <thead className="sticky top-0 z-[200] bg-white border-b border-slate-300 dark:border-slate-700">
                 <tr className="border-b border-slate-300 dark:border-slate-700">
-                  <th className="w-20 p-2 border-r border-slate-300 dark:border-slate-700 sticky left-0 z-[110] bg-slate-50 dark:bg-slate-900">
+                  <th className="w-20 p-2 border-r border-slate-300 dark:border-slate-700 sticky left-0 z-[210] bg-slate-50 dark:bg-slate-900">
                     <div className="flex flex-col items-center text-[9px] text-primary font-black uppercase">
                       <span>{format(topVisibleDate, "yyyy年")}</span>
                       <span className="text-[11px]">{format(topVisibleDate, "M月")}</span>
@@ -428,7 +428,7 @@ export default function ScheduleGrid() {
                         return (
                           <td key={`${tank.id}-${date.toISOString()}`} className={cn("p-0 relative border-r border-b border-slate-300 dark:border-slate-700", tank.category==="WORK"?"bg-slate-50/30 dark:bg-slate-900/20":"bg-transparent")}>
                             {(() => {
-                               const staysWithZ = dayStays.map(s => {
+                               const staysWithZ = dayStays.map((s, cellIdx) => {
                                   const isBrewDay = isSameDay(date, new Date(s.brewDate));
                                   const isPhaseActive = isBrewDay || (
                                      viewMode === "PRE" 
@@ -436,9 +436,8 @@ export default function ScheduleGrid() {
                                        : (startOfDay(date) > startOfDay(new Date(s.brewDate)))
                                   );
                                   const zBase = s.isWork ? 10 : (isPhaseActive ? 20 : 0);
-                                  // Add lIdx to break ties while keeping tiers (Active: 20-29, Work: 10-19, Inactive: 0-9)
-                                  const lIdx = mergedStays.indexOf(s);
-                                  return { stay: s, isPhaseActive, zIndex: zBase + lIdx };
+                                  // Use local cellIdx instead of global mergedStays index to prevent z-index overflow
+                                  return { stay: s, isPhaseActive, zIndex: zBase + cellIdx };
                                });
 
                                const maxZ = Math.max(...staysWithZ.map(s => s.zIndex), -1);
