@@ -435,8 +435,8 @@ export default function ScheduleGrid() {
                                        ? (startOfDay(date) < startOfDay(new Date(s.brewDate))) 
                                        : (startOfDay(date) > startOfDay(new Date(s.brewDate)))
                                   );
-                                  const zBase = s.isWork ? 10 : (isPhaseActive ? 20 : 0);
-                                  // Use local cellIdx instead of global mergedStays index to prevent z-index overflow
+                                  // Keep zBase very low (max ~10) so modals (fixed, high z-index) always appear above panels
+                                  const zBase = s.isWork ? 1 : (isPhaseActive ? 2 : 0);
                                   return { stay: s, isPhaseActive, zIndex: zBase + cellIdx };
                                });
 
