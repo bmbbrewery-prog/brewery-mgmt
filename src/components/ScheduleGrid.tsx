@@ -385,9 +385,9 @@ export default function ScheduleGrid() {
         <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-grow overflow-auto relative scrollbar-hide">
           {!isInitialLoading && (
             <table className="w-full border-collapse table-fixed" style={{ width: `calc(80px + ${sortedTanks.length * columnWidth}px)` }}>
-              <thead className="sticky top-0 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
+              <thead className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
                 <tr className="border-b border-slate-300 dark:border-slate-700">
-                  <th className="w-20 p-2 border-r border-slate-300 dark:border-slate-700 sticky left-0 z-40 bg-slate-50 dark:bg-slate-900">
+                  <th className="w-20 p-2 border-r border-slate-300 dark:border-slate-700 sticky left-0 z-60 bg-slate-50 dark:bg-slate-900">
                     <div className="flex flex-col items-center text-[9px] text-primary font-black uppercase">
                       <span>{format(topVisibleDate, "yyyy年")}</span>
                       <span className="text-[11px]">{format(topVisibleDate, "M月")}</span>
