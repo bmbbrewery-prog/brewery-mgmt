@@ -413,7 +413,7 @@ export default function ScheduleGrid() {
                   return (
                     <tr key={date.toISOString()} 
                       style={{ height: rowHeight }} 
-                      className={cn("divide-x divide-slate-100 dark:divide-slate-900 transition-colors", dayToday ? "bg-primary/5" : weekend ? "bg-slate-50/50 dark:bg-slate-900/40" : "")}
+                      className={cn("divide-x divide-slate-100 dark:divide-slate-900 transition-colors", dayToday ? "bg-primary/5" : weekend ? "bg-slate-200/70 dark:bg-slate-900/40" : "")}
                       onDragOver={handleRowDragOverDate}
                       onDrop={(e) => handleRowDrop(e, dIdx)}
                     >
