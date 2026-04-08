@@ -560,7 +560,7 @@ export default function ScheduleGrid() {
       <AddWorkModal 
         isOpen={isWorkModalOpen || !!selectedWorkEdit} 
         onClose={() => { setIsWorkModalOpen(false); setSelectedWorkEdit(null); }} 
-        workTanks={tanks.filter(t=>t.category==='WORK' || t.category==='TANK')} 
+        workTanks={tanks.filter(t=>t.category==='WORK')} 
         work={selectedWorkEdit}
         onSuccess={fetchData} 
       />
